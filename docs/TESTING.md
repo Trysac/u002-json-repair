@@ -19,6 +19,8 @@ npm run check       # every gate, including tests
   Lowering the thresholds is not allowed.
 - Test through the public entry point (`src/index.ts`) and assert observable behavior: return values,
   thrown errors and their messages.
+- The suite covers truncation after a backslash inside a string, unicode escapes, lone surrogates kept as-is,
+  numbers such as `-` at end of input, nested arrays and empty arrays.
 - Each bug fix adds a test that fails without the fix.
 - Tests are deterministic: no network, no real clock or randomness without injection, no shared state between
   tests. Temporary files go to the OS temp directory and are removed by the test.

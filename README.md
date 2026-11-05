@@ -8,8 +8,7 @@ Repair truncated or malformed JSON returned by an LLM with an iterative tolerant
 
 ## Problem
 
-Describe in two or three sentences the concrete problem this utility solves, who hits it, and why existing
-packages do not solve it well. Keep it factual; link to an issue or decision record when there is one.
+LLMs return JSON cut off at the token limit, wrapped in prose or code fences, or written with comments, trailing commas, single quotes, unquoted keys, and Python or NaN literals. `JSON.parse` rejects all of these. Naive repair approaches rewrite strings with regexes, recurse until the stack overflows on hostile input, or let a `__proto__` key reach the prototype. This library repairs the common failure modes deterministically and reports exactly what it changed, so callers can reject risky repairs.
 
 ## Install
 
@@ -22,24 +21,21 @@ Requires Node.js 20 or newer. The package ships ES modules with TypeScript decla
 ## Usage
 
 ```ts
-import { greet } from "@trysac/json-repair";
+import { repairJson } from "@trysac/json-repair";
 
-// Build a greeting; surrounding whitespace is ignored.
-const message = greet("  Ada ");
-console.log(message); // "Hello, Ada!"
-
-try {
-  greet("   ");
-} catch (error) {
-  console.error((error as Error).message); // "name must not be empty"
-}
+const result = repairJson('{"a":1, "b": [1, 2');
+console.log(result.value); // { a: 1, b: [ 1, 2 ] }
+console.log(result.text); // {"a":1,"b":[1,2]}
+console.log(result.fixes.map((fix) => fix.kind)); // [ 'close', 'close' ]
 ```
 
 ## API
 
 | Export | Signature | Description |
 |---|---|---|
-| `greet` | `(name: string) => string` | Placeholder API; replace it with the real one. |
+| `repairJson` | `(input: string, options?: RepairOptions) => RepairResult` | Repairs the input; throws `JsonRepairError` on failure. |
+| `tryRepairJson` | `(input: string, options?: RepairOptions) => RepairResult \| null` | Same as `repairJson` but returns `null` instead of throwing. |
+| `JsonRepairError` | class extends `Error` | Carries `code` and `offset`. |
 
 ## Development
 
