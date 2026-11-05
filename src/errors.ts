@@ -1,9 +1,5 @@
 /** Stable machine-readable error codes of this library. */
-export type JsonRepairErrorCode =
-  | "INPUT_TOO_LARGE"
-  | "EMPTY_INPUT"
-  | "UNREPAIRABLE"
-  | "MAX_DEPTH";
+export type JsonRepairErrorCode = "INPUT_TOO_LARGE" | "EMPTY_INPUT" | "UNREPAIRABLE" | "MAX_DEPTH";
 
 const MAX_MESSAGE_LENGTH = 200;
 

@@ -61,16 +61,7 @@ const PYTHON_LITERALS = new Map<string, boolean | null>([
   ["None", null],
 ]);
 
-const KNOWN_WORDS = new Set([
-  "true",
-  "false",
-  "null",
-  "True",
-  "False",
-  "None",
-  "NaN",
-  "Infinity",
-]);
+const KNOWN_WORDS = new Set(["true", "false", "null", "True", "False", "None", "NaN", "Infinity"]);
 
 function unrepairable(message: string, offset: number): JsonRepairError {
   return new JsonRepairError("UNREPAIRABLE", message, offset);
@@ -221,10 +212,7 @@ class Parser {
 
   private skipFenceMarker(): void {
     this.pos += 3;
-    while (
-      this.pos < this.len &&
-      isFenceInfoCode(this.input.charCodeAt(this.pos))
-    ) {
+    while (this.pos < this.len && isFenceInfoCode(this.input.charCodeAt(this.pos))) {
       this.pos++;
     }
   }
@@ -397,28 +385,18 @@ class Parser {
       this.parseStringValue();
     } else if (isIdentStart(ch)) {
       this.parseLiteral(false);
-    } else if (
-      (ch === "-" || ch === "+") &&
-      isIdentStart(this.input.charAt(this.pos + 1))
-    ) {
+    } else if ((ch === "-" || ch === "+") && isIdentStart(this.input.charAt(this.pos + 1))) {
       this.parseLiteral(true);
     } else if (isNumberStart(ch)) {
       this.parseNumber();
     } else {
-      throw unrepairable(
-        `unexpected character ${JSON.stringify(ch)}`,
-        this.pos,
-      );
+      throw unrepairable(`unexpected character ${JSON.stringify(ch)}`, this.pos);
     }
   }
 
   private open(kind: "array" | "object"): void {
     if (this.stack.length >= this.maxDepth) {
-      throw new JsonRepairError(
-        "MAX_DEPTH",
-        `nesting exceeds maxDepth ${this.maxDepth}`,
-        this.pos,
-      );
+      throw new JsonRepairError("MAX_DEPTH", `nesting exceeds maxDepth ${this.maxDepth}`, this.pos);
     }
     if (kind === "array") {
       this.stack.push({ kind: "array", items: [], commaOffset: -1 });

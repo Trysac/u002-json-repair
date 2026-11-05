@@ -17,9 +17,7 @@ const DEFAULT_MAX_LENGTH = 1_000_000;
 const DEFAULT_MAX_DEPTH = 512;
 
 function positiveInteger(value: number | undefined, fallback: number): number {
-  return value !== undefined && Number.isSafeInteger(value) && value > 0
-    ? value
-    : fallback;
+  return value !== undefined && Number.isSafeInteger(value) && value > 0 ? value : fallback;
 }
 
 function isBlank(text: string): boolean {
@@ -35,11 +33,7 @@ function serialize(value: unknown): string {
   try {
     return JSON.stringify(value);
   } catch {
-    throw new JsonRepairError(
-      "MAX_DEPTH",
-      "repaired value is too deeply nested to serialize",
-      0,
-    );
+    throw new JsonRepairError("MAX_DEPTH", "repaired value is too deeply nested to serialize", 0);
   }
 }
 
@@ -58,10 +52,7 @@ function serialize(value: unknown): string {
  * @throws {JsonRepairError} `INPUT_TOO_LARGE`, `EMPTY_INPUT`, `UNREPAIRABLE`
  * or `MAX_DEPTH`.
  */
-export function repairJson(
-  input: string,
-  options: RepairOptions = {},
-): RepairResult {
+export function repairJson(input: string, options: RepairOptions = {}): RepairResult {
   if (typeof input !== "string") {
     throw new JsonRepairError("UNREPAIRABLE", "input must be a string", 0);
   }
@@ -77,11 +68,7 @@ export function repairJson(
   if (isBlank(input)) {
     throw new JsonRepairError("EMPTY_INPUT", "input is empty", 0);
   }
-  const { value, fixes } = parse(
-    input,
-    maxDepth,
-    options.allowTruncation ?? true,
-  );
+  const { value, fixes } = parse(input, maxDepth, options.allowTruncation ?? true);
   if (fixes.length === 0) {
     return { value, text: input, fixes };
   }
@@ -95,10 +82,7 @@ export function repairJson(
  * @param options - Limits and truncation policy.
  * @returns The repair result, or `null` when the input cannot be repaired.
  */
-export function tryRepairJson(
-  input: string,
-  options: RepairOptions = {},
-): RepairResult | null {
+export function tryRepairJson(input: string, options: RepairOptions = {}): RepairResult | null {
   try {
     return repairJson(input, options);
   } catch {
