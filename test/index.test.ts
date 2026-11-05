@@ -134,9 +134,7 @@ describe("acceptance examples", () => {
     expect(result.value).toEqual({ a: 1 });
     expect(kinds(result)).toEqual(["drop-dangling-key", "close"]);
     expect(result.fixes[0]?.offset).toBe(9);
-    const error = failure(() =>
-      repairJson('{"a": 1, "b": ', { allowTruncation: false }),
-    );
+    const error = failure(() => repairJson('{"a": 1, "b": ', { allowTruncation: false }));
     expect(error.code).toBe("UNREPAIRABLE");
   });
 
@@ -314,18 +312,11 @@ describe("truncation", () => {
 
 describe("strip fixes", () => {
   it("removes prose and code fences", () => {
-    const result = repairJson(
-      'Here you go:\n```json\n{"a": 1}\n```\nHope it helps!',
-    );
+    const result = repairJson('Here you go:\n```json\n{"a": 1}\n```\nHope it helps!');
     expect(result.value).toEqual({ a: 1 });
     expect(result.text).toBe('{"a":1}');
     expect(kinds(result)).toEqual(["strip", "strip", "strip", "strip"]);
-    expect(details(result)).toEqual([
-      "prose",
-      "code fence",
-      "code fence",
-      "prose",
-    ]);
+    expect(details(result)).toEqual(["prose", "code fence", "code fence", "prose"]);
   });
 
   it("handles fences without a language or a newline", () => {
@@ -340,11 +331,7 @@ describe("strip fixes", () => {
   it("removes line and block comments", () => {
     const result = repairJson("/* lead */ [1, /* mid */ 2] // tail");
     expect(result.value).toEqual([1, 2]);
-    expect(details(result)).toEqual([
-      "block comment",
-      "block comment",
-      "line comment",
-    ]);
+    expect(details(result)).toEqual(["block comment", "block comment", "line comment"]);
   });
 
   it("tolerates an unterminated block comment", () => {
@@ -447,10 +434,7 @@ describe("string control characters", () => {
     const result = repairJson('"a\nb\tc"');
     expect(result.value).toBe("a\nb\tc");
     expect(result.text).toBe('"a\\nb\\tc"');
-    expect(kinds(result)).toEqual([
-      "escape-control-char",
-      "escape-control-char",
-    ]);
+    expect(kinds(result)).toEqual(["escape-control-char", "escape-control-char"]);
     expect(result.fixes.map((fix) => fix.offset)).toEqual([2, 4]);
     expect(result.fixes[0]?.detail).toContain("U+000A");
   });

@@ -453,11 +453,7 @@ class Parser {
     } else {
       if (Object.hasOwn(frame.members, frame.key)) {
         const shown = excerpt(frame.key);
-        this.addFix(
-          "duplicate-key",
-          frame.keyOffset,
-          `duplicate key "${shown}"; last value kept`,
-        );
+        this.addFix("duplicate-key", frame.keyOffset, `duplicate key "${shown}"; last value kept`);
       }
       Object.defineProperty(frame.members, frame.key, {
         value,
@@ -532,11 +528,7 @@ class Parser {
         const code = ch.charCodeAt(0);
         if (code < 0x20) {
           const hex = code.toString(16).toUpperCase().padStart(4, "0");
-          this.addFix(
-            "escape-control-char",
-            this.pos,
-            `raw control character U+${hex} escaped`,
-          );
+          this.addFix("escape-control-char", this.pos, `raw control character U+${hex} escaped`);
         }
         this.pos++;
       }
@@ -588,11 +580,7 @@ class Parser {
     }
     const word = this.input.slice(wordStart, this.pos);
     if (word === "NaN" || word === "Infinity") {
-      this.addFix(
-        "non-finite-literal",
-        start,
-        `${sign}${word} replaced by null`,
-      );
+      this.addFix("non-finite-literal", start, `${sign}${word} replaced by null`);
       this.completeValue(null);
     } else if (!signed && JSON_LITERALS.has(word)) {
       this.completeValue(JSON_LITERALS.get(word));
@@ -625,20 +613,12 @@ class Parser {
     this.pos = end;
     const value = Number(normalized);
     if (!Number.isFinite(value)) {
-      this.addFix(
-        "non-finite-literal",
-        start,
-        `number "${shown}" out of range replaced by null`,
-      );
+      this.addFix("non-finite-literal", start, `number "${shown}" out of range replaced by null`);
       this.completeValue(null);
       return;
     }
     if (normalized !== token) {
-      this.addFix(
-        "number",
-        start,
-        `number "${shown}" normalized to "${excerpt(normalized)}"`,
-      );
+      this.addFix("number", start, `number "${shown}" normalized to "${excerpt(normalized)}"`);
     }
     this.completeValue(value);
   }
@@ -653,10 +633,6 @@ class Parser {
  * @returns The parsed value and every fix, sorted by offset.
  * @throws {JsonRepairError} When the input cannot be repaired.
  */
-export function parse(
-  input: string,
-  maxDepth: number,
-  allowTruncation: boolean,
-): ParseOutcome {
+export function parse(input: string, maxDepth: number, allowTruncation: boolean): ParseOutcome {
   return new Parser(input, maxDepth, allowTruncation).run();
 }
