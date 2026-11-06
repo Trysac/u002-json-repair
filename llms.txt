@@ -1,13 +1,14 @@
 # @trysac/json-repair
 
-> Repairs truncated or malformed JSON returned by an LLM with an iterative tolerant parser and an offset-annotated report of every fix. TypeScript library for Node.js 20+, zero runtime dependencies, published as ES modules with type declarations. MIT.
+> Repairs truncated or malformed JSON returned by an LLM. A single-pass TypeScript library with no runtime dependencies for Node.js 20+ and browsers, published as ES modules with type declarations. Returns the value, the repaired text and an offset-annotated list of fixes. MIT.
 
 ## Docs
 
-- [README](README.md): problem, installation and usage example
+- [README](README.md): problem, installation, usage and API
 - [AGENTS.md](AGENTS.md): commands, folder map, conventions and limits for contributors and agents
-- [Architecture](docs/ARCHITECTURE.md): modules and boundaries
-- [Testing](docs/TESTING.md): how tests and coverage work
+- [Architecture](docs/ARCHITECTURE.md): modules, parse flow and boundaries
+- [Testing](docs/TESTING.md): test files and coverage rules
+- [Security](docs/SECURITY.md): threat model and limits
 - [Decisions](docs/decisions/0001-record-architecture-decisions.md): architecture decision records
 
 ## Optional
