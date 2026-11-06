@@ -9,9 +9,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Add `repairJson` and `tryRepairJson`: an iterative, prototype-safe tolerant JSON parser that repairs truncated or malformed LLM output and returns the value, compact text and an offset-annotated list of fixes.
-
-
-### Added
-
+- Add `repairJson` and `tryRepairJson`: an iterative, zero-dependency tolerant JSON parser that repairs truncated or malformed LLM output and returns the value, the repaired text and an offset-annotated list of every fix, with typed `JsonRepairError` codes and limits on length, depth and fixes.
 - Initial project structure from the factory utility template.

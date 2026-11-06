@@ -1,15 +1,15 @@
-# Single-pass tolerant parser with an explicit stack and a fix report
+# Single-pass tolerant parser with an explicit stack and a fix ledger
 
 Status: accepted (generated, pending human review)
 
 ## Context
 
-LLM output is often truncated or malformed JSON. Regex-based repair rewrites string contents, recursive repair overflows the call stack on hostile nesting, and assigning keys such as __proto__ can reach the prototype. Callers also need to know what changed so they can reject risky repairs, and the code must run in browsers without node: imports.
+LLM output is often truncated, wrapped in prose or written with comments, trailing commas, single quotes and Python or NaN literals. Regex rewriting of strings is unsafe, recursive parsers overflow the stack on hostile nesting, and assigning keys with plain property syntax lets a __proto__ key reach the prototype. Callers also need to know what was changed so they can reject risky repairs, which a string-only result does not allow.
 
 ## Decision
 
-Implement one tolerant pass over the input with an explicit frame stack and a small state machine (value, afterValue, key, colon, done). Depth is bounded by maxDepth and input size by maxLength. Members are created with Object.defineProperty. Every repair is recorded as a Fix of one of ten kinds with a UTF-16 offset; fixes are sorted by offset. With zero fixes the original text is returned, otherwise compact JSON.stringify of the value, which makes repair idempotent. Invalid escape sequences are rejected instead of guessed, and options that are invalid fall back to defaults so tryRepairJson never throws.
+Implement one tolerant parser as a state machine over an explicit stack of frames, with three states (value, element, after) and no recursion, so nesting is bounded by maxDepth. Every repair is recorded as a frozen Fix with a kind, a UTF-16 offset and a detail, then the fixes are sorted by offset. Objects are built with Object.defineProperty so __proto__ is an own property, and duplicate names keep the last value and are reported. When no fix was needed the input is returned unchanged as text; otherwise the value is re-serialised, and only then are lossy number conversions reported. Input length, nesting depth and fix count each have a named limit that raises the typed JsonRepairError.
 
 ## Consequences
 
-Repair is linear in input size, immune to stack overflow, prototype-safe and fully auditable through the fix list. Some imperfect inputs (unescaped quotes inside strings, invalid escapes, truncated literals such as tru) are reported as UNREPAIRABLE rather than guessed. Serializing an extremely deep value with a very large maxDepth may still hit the engine limit and is reported as MAX_DEPTH.
+Hostile input cannot overflow the stack or pollute prototypes, and every change is auditable by offset. The parser is deliberately conservative: ambiguous input such as a sign without digits, an unknown escape or glued tokens is UNREPAIRABLE rather than guessed. Serialising a value nested deeper than the engine allows can still overflow in JSON.stringify, so that failure is mapped to MAX_DEPTH. Features such as JSON5 and streaming are out of scope and would need a different design.
