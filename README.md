@@ -1,7 +1,6 @@
 # json-repair
 
-[![npm version](https://img.shields.io/npm/v/@trysac/json-repair.svg)](https://www.npmjs.com/package/@trysac/json-repair)
-[![license: MIT](https://img.shields.io/npm/l/@trysac/json-repair.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/Trysac/u002-json-repair/actions/workflows/ci.yml/badge.svg)](https://github.com/Trysac/u002-json-repair/actions/workflows/ci.yml)
 
 Repair truncated or malformed JSON returned by an LLM with an iterative tolerant parser and an offset-annotated report of every fix, zero dependencies
@@ -12,9 +11,15 @@ LLM output is often cut off at the token limit, wrapped in prose or code fences,
 
 ## Install
 
+Not published to npm yet. Build it from a clone, then install it from the local path:
+
 ```sh
-npm install @trysac/json-repair
+git clone https://github.com/Trysac/u002-json-repair.git
+cd u002-json-repair && npm ci && npm run build
+cd ../your-project && npm install ../u002-json-repair
 ```
+
+Imports keep the package name: `import { ... } from "@trysac/json-repair"`.
 
 Requires Node.js 20 or newer. The package ships ES modules with TypeScript declarations and has no runtime dependencies.
 
